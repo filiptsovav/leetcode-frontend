@@ -1,101 +1,109 @@
-import React, { useState, useEffect } from "react";
-import { Bar, Doughnut, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-} from "chart.js";
+import React, { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
 import { useNavigate } from "react-router-dom";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+// Основной фирменный синий, использованный ранее
+const PRIMARY_BLUE = "#2A4DD0";
 
-export default function Statistics({
-  difficultyStats = [5, 10, 3],
-  topicStats = { Array: 4, DP: 2, Graph: 3 },
-  avgTimeData = [30, 45, 60],
-  firstAttemptData = [8, 12],
-}) {
-  const [timeframe, setTimeframe] = useState("week");
+export default function Statistics() {
   const navigate = useNavigate();
+  const [timeframe, setTimeframe] = useState("month");
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
+  const [difficultyStats, setDifficultyStats] = useState([]);
+  const [topicStats, setTopicStats] = useState({});
+  const [avgTime, setAvgTime] = useState([]);
+  const [firstAttempt, setFirstAttempt] = useState([]);
+  const [dayOfWeekStats, setDayOfWeekStats] = useState({});
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  // ---- Fetch from backend ----
+  async function loadStatistics(tf = timeframe) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/statistics?timeframe=${tf}`, { credentials: "include" });
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+        const data = await response.json();
+        setDifficultyStats(data.difficultyStats || []);
+        setTopicStats(data.topicStats || {});
+        setDayOfWeekStats(data.dayOfWeekStats || {});
+        setAvgTime(data.avgTime || []);
+        setFirstAttempt(data.firstAttempt || []);
+      } catch (e) {
+        console.error("Load error:", e);
+      }
+      setIsLoading(false);
+    }
+
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 900);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    loadStatistics();
   }, []);
 
-  const chartContainerStyle = {
-    backgroundColor: "#ffffff",
-    borderRadius: "12px",
+  useEffect(() => {
+    loadStatistics(timeframe);
+  }, [timeframe]);
+
+  // ---- Styles ----
+  const pageStyle = {
+    minHeight: "100vh",
+    backgroundColor: "#F2F4FF",
+    padding: "24px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
+
+  const card = {
+    background: "#fff",
+    borderRadius: "14px",
+    padding: "18px",
+    width: "100%",
+    maxWidth: "450px",
+    minHeight: "350px",
     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-    padding: "20px",
-    textAlign: "center",
-    flex: "1",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    height: "380px",
-    minWidth: "280px",
   };
 
-  const chartTitleStyle = {
-    fontSize: "1.6rem",
-    fontWeight: "700",
-    marginBottom: "15px",
-    color: "#1a237e",
+  const chartsRow = {
+    width: "100%",
+    maxWidth: "1400px",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "22px",
+    marginTop: "20px",
   };
 
-  const softBlue = "#6CA0DC";
-  const softPink = "#F7A8B8";
-  const softYellow = "#FFD166";
-  const softPurple = "#CDB4DB";
+  const title = {
+    fontSize: "2.2rem",
+    fontWeight: 800,
+    color: PRIMARY_BLUE,
+    marginBottom: "18px",
+  };
+
+  const selectStyle = {
+    padding: "8px 12px",
+    fontSize: "1rem",
+    borderRadius: "8px",
+    border: "1px solid #c7c7c7",
+  };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        minHeight: "100vh",
-        backgroundColor: "#f0f4ff",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "25px",
-      }}
-    >
-      <h1
-        style={{
-          marginBottom: "15px",
-          fontSize: "2.4rem",
-          fontWeight: 800,
-          color: "#1a237e",
-        }}
-      >
-        Statistics
-      </h1>
+    <div style={pageStyle}>
+      <h1 style={title}>Statistics</h1>
 
-      <div style={{ marginBottom: "20px" }}>
-        <label
-          htmlFor="timeframe"
-          style={{ fontWeight: 600, fontSize: "1.1rem", color: "#1a237e" }}
-        >
+      {/* Timeframe selector */}
+      <div style={{ marginBottom: "16px" }}>
+        <label style={{ fontWeight: 600, marginRight: "10px", color: PRIMARY_BLUE }}>
           Time period:
         </label>
         <select
-          id="timeframe"
+          style={selectStyle}
           value={timeframe}
           onChange={(e) => setTimeframe(e.target.value)}
-          style={{
-            marginLeft: "10px",
-            padding: "6px 12px",
-            fontSize: "1rem",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-          }}
         >
           <option value="week">Week</option>
           <option value="month">Month</option>
@@ -103,88 +111,87 @@ export default function Statistics({
         </select>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          justifyContent: "center",
-          alignItems: "stretch",
-          gap: "20px",
-          width: "100%",
-          maxWidth: "1300px",
-        }}
-      >
-        <div style={chartContainerStyle}>
-          <div style={chartTitleStyle}>Average Solving Time</div>
-          <Pie
-            data={{
-              labels: ["Easy", "Medium", "Hard"],
-              datasets: [
-                {
-                  data: avgTimeData,
-                  backgroundColor: [softBlue, softYellow, softPink],
-                },
-              ],
-            }}
-          />
-        </div>
+      {isLoading ? (
+        <div style={{ marginTop: "30px", fontSize: "1.2rem" }}>Loading...</div>
+      ) : (
+        <>
+          {/* ROW 1 */}
+          <div style={chartsRow}>
+            {/* Average time */}
+            <div style={card}>
+              <Chart
+                options={{
+                  labels: ["Easy", "Medium", "Hard"],
+                  colors: ["#6CA0DC", "#FFD166", "#F69AC1"],
+                  legend: { position: "bottom" },
+                }}
+                series={avgTime}
+                type="pie"
+                height="100%"
+              />
+            </div>
 
-        <div style={chartContainerStyle}>
-          <div style={chartTitleStyle}>First Attempt Success</div>
-          <Doughnut
-            data={{
-              labels: ["First Try", "Not First Try"],
-              datasets: [
-                {
-                  data: firstAttemptData,
-                  backgroundColor: [softPurple, softBlue],
-                },
-              ],
-            }}
-          />
-        </div>
+            {/* First attempt */}
+            <div style={card}>
+              <Chart
+                options={{
+                  labels: ["First Attempt", "Not First"],
+                  colors: ["#A88EE0", "#6CA0DC"],
+                  plotOptions: {
+                    pie: {
+                      donut: { size: "60%" },
+                    },
+                  },
+                  legend: { position: "bottom" },
+                }}
+                series={firstAttempt}
+                type="donut"
+                height="100%"
+              />
+            </div>
+          </div>
 
-        <div style={chartContainerStyle}>
-          <div style={chartTitleStyle}>Topics</div>
-          <Bar
-            data={{
-              labels: Object.keys(topicStats),
-              datasets: [
-                {
-                  label: "Solved Problems",
-                  data: Object.values(topicStats),
-                  backgroundColor: softPink,
-                },
-              ],
-            }}
-            options={{
-              plugins: { legend: { display: false } },
-              scales: {
-                y: { beginAtZero: true, ticks: { font: { size: 13 } } },
-                x: { ticks: { font: { size: 13 } } },
-              },
-            }}
-          />
-        </div>
-      </div>
+          {/* ROW 2 */}
+          <div style={chartsRow}>
+            {/* Topics */}
+            <div style={{ ...card, maxWidth: "900px" }}>
+              <Chart
+                options={{
+                  chart: { id: "topics" },
+                  xaxis: { categories: Object.keys(topicStats) },
+                  colors: [PRIMARY_BLUE],
+                  plotOptions: {
+                    bar: { borderRadius: 6 },
+                  },
+                }}
+                series={[
+                  {
+                    name: "Solved",
+                    data: Object.values(topicStats),
+                  },
+                ]}
+                type="bar"
+                height="100%"
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       <button
-        onClick={() => navigate("/dashboard")}
         style={{
-          marginTop: "25px",
-          padding: "12px 24px",
+          marginTop: "30px",
+          padding: "12px 26px",
           fontSize: "1.1rem",
           fontWeight: 600,
-          backgroundColor: "#5A8DEE",
           color: "#fff",
+          backgroundColor: PRIMARY_BLUE,
           border: "none",
-          borderRadius: "8px",
+          borderRadius: "10px",
           cursor: "pointer",
-          transition: "background 0.3s ease",
           boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
         }}
-        onMouseOver={(e) => (e.target.style.backgroundColor = "#4979D0")}
-        onMouseOut={(e) => (e.target.style.backgroundColor = "#5A8DEE")}
+        onClick={() => navigate("/dashboard")}
       >
         Return to Homepage
       </button>

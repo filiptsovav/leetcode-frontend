@@ -11,18 +11,47 @@ export default function TaskChosen() {
   const [completionDate, setCompletionDate] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [status, setStatus] = useState("blue"); // default tag color
+
   const [message, setMessage] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Валидация
     if (!/^\d+$/.test(taskTime) || attemptNumber < 1) {
       setMessage({ type: "error", text: "Please enter valid values." });
       return;
     }
 
-    setMessage({ type: "success", text: "Task successfully saved!" });
+    // Подготовка данных
+    const formData = new URLSearchParams();
+    formData.append("taskName", taskName);
+    formData.append("taskTime", taskTime);
+    formData.append("completionDate", completionDate);
+    formData.append("attemptNumber", attemptNumber);
+
+    try {
+      const response = await fetch("/taskChosen", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage({ type: "error", text: data.error || "Error occurred." });
+        return;
+      }
+
+      setMessage({ type: "success", text: "Task successfully saved!" });
+
+    } catch (err) {
+      setMessage({ type: "error", text: "Server unavailable." });
+    }
   };
 
   return (
@@ -45,8 +74,9 @@ export default function TaskChosen() {
         }}
       >
         <h2 className="text-center mb-4">Task Information</h2>
+
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          {/* Task Name */}
+
           <div className="card p-3">
             <label htmlFor="taskName">Task Name</label>
             <input
@@ -59,7 +89,6 @@ export default function TaskChosen() {
             />
           </div>
 
-          {/* Time to Solve */}
           <div className="card p-3">
             <label htmlFor="taskTime">Time to Solve (in minutes)</label>
             <input
@@ -68,13 +97,11 @@ export default function TaskChosen() {
               className="form-control"
               required
               pattern="[0-9]+"
-              title="Enter a positive number"
               value={taskTime}
               onChange={(e) => setTaskTime(e.target.value)}
             />
           </div>
 
-          {/* Attempt Number */}
           <div className="card p-3">
             <label htmlFor="attemptNumber">Attempt Number</label>
             <input
@@ -88,8 +115,7 @@ export default function TaskChosen() {
             />
           </div>
 
-          {/* Completion Date */}
-          <div className="card p-3 d-flex flex-column gap-2">
+          <div className="card p-3">
             <label htmlFor="completionDate">Completion Date</label>
             <input
               type="date"
@@ -99,34 +125,6 @@ export default function TaskChosen() {
               value={completionDate}
               onChange={(e) => setCompletionDate(e.target.value)}
             />
-            <div className="d-flex gap-2 mt-2">
-              {/* Теги статуса */}
-              {["red", "green", "yellow", "blue"].map((color) => (
-                <span
-                  key={color}
-                  className="tag"
-                  style={{
-                    backgroundColor:
-                      color === "red"
-                        ? "#dc3545"
-                        : color === "green"
-                        ? "#28a745"
-                        : color === "yellow"
-                        ? "#ffc107"
-                        : "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    borderRadius: "15px",
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
-                  onClick={() => setStatus(color)}
-                >
-                  {color.charAt(0).toUpperCase() + color.slice(1)}
-                </span>
-              ))}
-            </div>
-            <small>Selected status: {status}</small>
           </div>
 
           <button type="submit" className="btn btn-primary py-2 mt-2">

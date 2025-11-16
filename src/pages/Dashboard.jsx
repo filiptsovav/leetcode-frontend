@@ -9,7 +9,7 @@ export default function Dashboard({ username = "User" }) {
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
-      navigate("/logout");
+      navigate("/login");
     }
   };
 
@@ -57,8 +57,8 @@ export default function Dashboard({ username = "User" }) {
           color: "#343a40",
         }}
       >
-        Привет, {username}! <br />
-        Что хочешь решать сегодня?
+        Hello, {username}! <br />
+        What are we solving today?
       </h3>
 
       {/* Кнопки вертикально */}

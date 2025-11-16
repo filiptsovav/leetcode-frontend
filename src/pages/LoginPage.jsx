@@ -12,18 +12,21 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("/login", {
+      const response = await fetch("/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       if (response.ok) {
         console.log("Login successful");
-        navigate("/home"); // можно потом добавить страницу home
+        navigate("/dashboard"); // редирект на главную страницу
       } else {
-        setError("Invalid username or password. Please try again.");
+        const data = await response.json();
+        setError(data.message || "Invalid username or password. Please try again.");
       }
+
     } catch (err) {
       console.error("Login error:", err);
       setError("Server error. Please try again later.");
