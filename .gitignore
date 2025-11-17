@@ -1,0 +1,35 @@
+# Основные каталоги
+node_modules/
+build/
+dist/
+.cache/
+
+# Операционная система
+.DS_Store
+Thumbs.db
+
+# Идея
+.idea/
+*.iml
+
+# Лог-файлы
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Среды разработки
+.vscode/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Скомпилированные файлы и папки
+*.js
+*.map
+*.css
+
+# Другие временные файлы
+*.log
+*.tmp

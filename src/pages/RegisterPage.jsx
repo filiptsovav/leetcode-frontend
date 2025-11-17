@@ -12,17 +12,19 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await fetch("/register", {
+      const response = await fetch("http://localhost:8080/auth/register", { //можно проще, не полный путь
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       if (response.ok) {
         console.log("Registration successful");
-        navigate("/login"); // сразу на страницу логина
+        navigate("/dashboard"); // сразу на главную страницу после регистрации
       } else {
-        setError("Username already exists. Please try again.");
+        const data = await response.json();
+        setError(data.message || "Username already exists. Please try again.");
       }
     } catch (err) {
       console.error("Register error:", err);

@@ -1,9 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function TaskList({ recommendedTasks = [] }) {
+export default function TaskList() {
   const navigate = useNavigate();
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("/taskSuggestion", {credentials: "include"})
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load tasks");
+        return res.json();
+      })
+      .then((data) => {
+        setTasks(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Unable to load recommended tasks.");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-danger mt-5">{error}</div>;
+  }
 
   return (
     <div
@@ -16,7 +43,7 @@ export default function TaskList({ recommendedTasks = [] }) {
         className="task-container d-grid gap-3"
         style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}
       >
-        {recommendedTasks.map((task) => (
+        {tasks.map((task) => (
           <a
             key={task.titleSlug}
             href={`https://leetcode.com/problems/${task.titleSlug}`}
@@ -48,6 +75,7 @@ export default function TaskList({ recommendedTasks = [] }) {
                 ? task.topicTags.map((tag) => tag.name).join(", ")
                 : "None"}
             </div>
+
             <div
               className="task-description"
               style={{
@@ -76,7 +104,7 @@ export default function TaskList({ recommendedTasks = [] }) {
           className="btn btn-primary"
           onClick={() => navigate("/dashboard")}
         >
-          <i className="fas fa-arrow-left" /> Return to Home Page
+          Return to Home Page
         </button>
       </div>
     </div>
