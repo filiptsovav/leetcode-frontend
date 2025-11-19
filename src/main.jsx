@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path= "/dashboard" element = {<Dashboard />} />
-        <Route path= "/taskChosen" element = {<TaskChosen />} />
+        <Route path="/tasks/chosen" element={<TaskChosen />} />
         <Route path= "/taskSuggestion" element = {<TaskSuggestion />} />
         <Route path= "/statistics" element = {<Statistics />} />
         {/* при желании можно добавить /home, /profile и т.п. */}

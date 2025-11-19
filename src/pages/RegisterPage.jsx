@@ -12,7 +12,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/auth/register", { //можно проще, не полный путь
+      const response = await fetch("/auth/register", { //можно проще, не полный путь
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

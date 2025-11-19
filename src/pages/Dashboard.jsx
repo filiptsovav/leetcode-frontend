@@ -69,7 +69,7 @@ export default function Dashboard({ username = "User" }) {
         {[
           { text: "View Statistics", to: "/statistics" },
           { text: "Suggest a Task", to: "/taskSuggestion" },
-          { text: "Task Selected", to: "/taskChosen" },
+          { text: "Task Selected", to: "/tasks/chosen" },
         ].map((btn) => (
           <button
             key={btn.text}
