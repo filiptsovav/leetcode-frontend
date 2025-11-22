@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import TaskChosen from "./pages/TaskChosen";
 import TaskSuggestion from "./pages/TaskSuggestion"
 import Statistics from "./pages/Statistics"
+import ChatCenter from "./pages/chat/ChatCenter";
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -20,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/tasks/chosen" element={<TaskChosen />} />
         <Route path= "/taskSuggestion" element = {<TaskSuggestion />} />
         <Route path= "/statistics" element = {<Statistics />} />
+        <Route path="/chat" element={<ChatCenter />} />
         {/* при желании можно добавить /home, /profile и т.п. */}
       </Routes>
     </BrowserRouter>

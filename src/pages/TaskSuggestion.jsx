@@ -9,7 +9,7 @@ export default function TaskList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/taskSuggestion", {credentials: "include"})
+    fetch("/taskSuggestion", { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load tasks");
         return res.json();
@@ -40,73 +40,130 @@ export default function TaskList() {
       <h1 className="text-center mb-4">Task List</h1>
 
       <div
-        className="task-container d-grid gap-3"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}
+        className="task-container"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "20px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+        }}
       >
         {tasks.map((task) => (
-          <a
+          <div
             key={task.titleSlug}
-            href={`https://leetcode.com/problems/${task.titleSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card p-3 text-decoration-none text-dark"
+            className="task-card"
             style={{
-              position: "relative",
-              overflow: "hidden",
+              aspectRatio: "1",
+              perspective: "1000px",
               cursor: "pointer",
-              transition: "transform 0.15s, box-shadow 0.15s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-3px)";
-              e.currentTarget.style.boxShadow = "0 6px 15px rgba(0,0,0,0.15)";
+              const card = e.currentTarget;
+              card.style.transform = "rotateY(180deg)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+              const card = e.currentTarget;
+              card.style.transform = "rotateY(0deg)";
             }}
           >
-            <div className="task-info text-center mb-2">
-              <strong>{task.title}</strong>
-              <br />
-              Difficulty: {task.difficulty}
-              <br />
-              Tags:{" "}
-              {task.topicTags && task.topicTags.length > 0
-                ? task.topicTags.map((tag) => tag.name).join(", ")
-                : "None"}
+            {/* Front side */}
+            <div
+              className="card-front"
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                backfaceVisibility: "hidden",
+                backgroundColor: "#ffffff",
+                border: "1px solid #dee2e6",
+                borderRadius: "5px",
+                padding: "15px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                transition: "transform 0.15s, box-shadow 0.15s",
+              }}
+            >
+              <div className="task-info text-center">
+                <strong style={{ fontSize: "1.1em" }}>{task.title}</strong>
+                <br />
+                <span style={{ color: task.difficulty === "Easy" ? "#28a745" : task.difficulty === "Medium" ? "#ffc107" : "#dc3545" }}>
+                  {task.difficulty}
+                </span>
+                <br />
+                <small className="text-muted">
+                  Tags: {task.topicTags && task.topicTags.length > 0
+                    ? task.topicTags.map((tag) => tag.name).join(", ")
+                    : "None"}
+                </small>
+              </div>
             </div>
 
+            {/* Back side */}
             <div
-              className="task-description"
+              className="card-back"
               style={{
-                display: "none",
                 position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0,123,255,0.1)",
-                color: "black",
-                padding: "15px",
+                width: "100%",
+                height: "100%",
+                backfaceVisibility: "hidden",
+                backgroundColor: "#ffc5e3",
+                border: "1px solid #dee2e6",
                 borderRadius: "5px",
-                textAlign: "center",
+                padding: "15px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transform: "rotateY(180deg)",
                 overflow: "hidden",
               }}
             >
-              <p>{task.content ? task.content.split("\n")[0] : "No content available"}</p>
+              <div style={{ textAlign: "center", overflow: "hidden" }}>
+                <p style={{ margin: 0, fontSize: "0.9em", lineHeight: "1.4" }}>
+                  {task.content
+                    ? task.content.replace(/<[^>]*>/g, '').split('\n')[0].substring(0, 150) + '...'
+                    : "No content available"}
+                </p>
+              </div>
             </div>
-          </a>
+          </div>
         ))}
       </div>
 
       <div className="text-center mt-4">
         <button
           className="btn btn-primary"
+          style={{
+            padding: "15px 30px",
+            fontSize: "1.1rem",
+            fontWeight: "500",
+            transition: "transform 0.15s, box-shadow 0.15s",
+            backgroundColor: "#ffc5e3",
+            border: "none",
+            color: "#000",
+          }}
           onClick={() => navigate("/dashboard")}
+          onMouseEnter={(e) => {
+            e.target.style.transform = "scale(1.05)";
+            e.target.style.boxShadow = "0 6px 12px rgba(0,0,0,0.15)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = "scale(1)";
+            e.target.style.boxShadow = "none";
+          }}
         >
           Return to Home Page
         </button>
       </div>
+
+      <style jsx>{`
+        .task-card {
+          transition: transform 0.6s;
+          transform-style: preserve-3d;
+        }
+      `}</style>
     </div>
   );
 }
