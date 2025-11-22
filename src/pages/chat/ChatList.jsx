@@ -3,18 +3,19 @@ import React from "react";
 export default function ChatList({ chats, activeChatId, onSelectChat, onCreateChat }) {
   return (
     <aside className="chat-list" aria-label="Chat list">
-      <div className="chat-list-header" style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+      <div className="chat-list-header" style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding: '12px'}}>
         <div>Chats</div>
         <button
           title="Create new chat"
-          onClick={() => {
-            const username = prompt("Введите username пользователя для нового чата:");
-            if (username) onCreateChat(username);
+          onClick={onCreateChat}
+          style={{
+            width:36, height:36, borderRadius:8, border:'none', background:'#4a90e2', color:'#fff', cursor:'pointer',
+            display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, marginLeft: 'auto'
           }}
+          aria-label="Create chat"
         >
           +
         </button>
-
       </div>
 
       <div className="chat-items-scroll" role="list">

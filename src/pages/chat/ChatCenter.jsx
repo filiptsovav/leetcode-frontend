@@ -34,25 +34,22 @@ export default function ChatCenter() {
   const [activeChatId, setActiveChatId] = useState(null);
 
   // Создать новый чат (локально). Можно заменить на POST /api/chats
-  function createNewChat(username) {
-    if (!username) return;
-    // логика как раньше, но с указанным username
-    const user = userRepository.findByUsername(username); // или fetch на бэк
-    if (!user) return alert("Пользователь не найден");
-
+  function createNewChat() {
     const newId = Date.now();
     const newChat = {
       id: newId,
-      name: username,
+      name: `New chat ${newId.toString().slice(-4)}`,
       avatar: avatar1,
       messages: [
-        { id: 1, sender: "system", text: "Новый чат создан. Напишите сообщение.", time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) }
+        { id: 1, sender: "system", text: "Новый чат создан. Напишите сообщение, чтобы начать.", time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) }
       ]
     };
     setChats((prev) => [newChat, ...prev]);
     setActiveChatId(newId);
-  }
 
+    // integration point:
+    // fetch("/api/chats", { method: "POST", body: JSON.stringify({ name: newChat.name })})
+  }
 
   // Отправка сообщения: обновляет chats в родителе => ChatWindow получает свежие props
   function sendMessage(chatId, text) {
@@ -76,8 +73,8 @@ export default function ChatCenter() {
     // fetch(`/api/chats/${chatId}/messages`, { method: "POST", headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'text', content:text })})
   }
 
-  const navigate = useNavigate();
   const activeChat = chats.find((c) => c.id === activeChatId) || null;
+  const navigate = useNavigate();
 
   return (
     <div className="chat-layout" role="application" aria-label="Chat center">
@@ -94,7 +91,6 @@ export default function ChatCenter() {
       >
         ← Dashboard
       </button>
-
 
       <ChatWindow chat={activeChat} onSend={(text) => sendMessage(activeChatId, text)} />
     </div>

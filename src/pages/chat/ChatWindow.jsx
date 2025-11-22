@@ -53,13 +53,11 @@ export default function ChatWindow({ chat, onSend }) {
     <main className="chat-window" aria-label={`Chat with ${chat.name}`}>
       <div className="chat-header">{chat.name}</div>
 
-      <div className="messages-wrapper">
-          <div className="messages-container" ref={messagesRef}>
-            {localMessages.map((m) => (
-              <MessageBubble key={m.id} msg={m} />
-            ))}
-          </div>
-        </div>
+      <div className="messages-container" ref={messagesRef}>
+        {localMessages.map((m) => (
+          <MessageBubble key={m.id} msg={m} />
+        ))}
+      </div>
 
       <div className="user-panel">
         <textarea

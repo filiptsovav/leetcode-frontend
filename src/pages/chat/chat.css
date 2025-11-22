@@ -1,0 +1,141 @@
+/* Общий контейнер */
+.chat-layout {
+  display: flex;
+  height: 100vh;
+  background: #f4f5f7;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar — список чатов */
+.chat-list {
+  width: 300px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+
+.chat-item:hover {
+  background: #f7f9fb;
+}
+
+.chat-item.active {
+  background: #e3f2fd;
+}
+
+.chat-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chat-title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.chat-last {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Окно сообщений */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f9f9fb;
+  position: relative;
+}
+
+/* панель ввода */
+.user-panel {
+  display: flex;
+  padding: 12px;
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+  position: absolute; /* Это поможет */
+  bottom: 0; /* Закрепить */
+  left: 0;
+  right: 0;
+  /* Высота может быть задана, если необходимо */
+}
+
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Пузырьки сообщений */
+.bubble {
+  max-width: 65%;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  position: relative;
+  line-height: 1.35;
+}
+
+.bubble.me {
+  background: #d1e7ff;
+  align-self: flex-end;
+}
+
+.bubble.other {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  align-self: flex-start;
+}
+
+.time {
+  font-size: 11px;
+  color: #666;
+  position: absolute;
+  bottom: -16px;
+  right: 4px;
+}
+
+
+.message-input {
+  flex: 1;
+  height: 60px;
+  resize: none;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+}
+
+.message-input:focus {
+  border-color: #4a90e2;
+}
+
+.send-btn {
+  width: 55px;
+  height: 55px;
+  margin-left: 12px;
+  border: none;
+  border-radius: 50%;
+  background: #4a90e2;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.send-btn:hover {
+  background: #3578c6;
+}
