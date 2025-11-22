@@ -86,7 +86,6 @@ button{cursor:pointer}
 .chat-window{
   display:flex;
   flex-direction:column;
-  height:calc(100vh - 220px);
 }
 .chat-header{
   display:flex;
