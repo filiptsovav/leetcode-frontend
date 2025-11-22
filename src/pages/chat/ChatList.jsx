@@ -7,15 +7,14 @@ export default function ChatList({ chats, activeChatId, onSelectChat, onCreateCh
         <div>Chats</div>
         <button
           title="Create new chat"
-          onClick={onCreateChat}
-          style={{
-            width:36, height:36, borderRadius:8, border:'none', background:'#4a90e2', color:'#fff', cursor:'pointer',
-            display:'flex', alignItems:'center', justifyContent:'center', fontSize:20
+          onClick={() => {
+            const username = prompt("Введите username пользователя для нового чата:");
+            if (username) onCreateChat(username);
           }}
-          aria-label="Create chat"
         >
           +
         </button>
+
       </div>
 
       <div className="chat-items-scroll" role="list">

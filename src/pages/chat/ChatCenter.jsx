@@ -3,6 +3,7 @@ import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import "../../index.css"; // глобальные базовые стили (если нужны)
 import "./chat.css"; // <-- все стили чата здесь
+import { useNavigate } from "react-router-dom";
 
 // аватарки (положите файлы в src/assets/)
 import avatar1 from "../../assets/avatar1.jpg";
@@ -33,22 +34,25 @@ export default function ChatCenter() {
   const [activeChatId, setActiveChatId] = useState(null);
 
   // Создать новый чат (локально). Можно заменить на POST /api/chats
-  function createNewChat() {
+  function createNewChat(username) {
+    if (!username) return;
+    // логика как раньше, но с указанным username
+    const user = userRepository.findByUsername(username); // или fetch на бэк
+    if (!user) return alert("Пользователь не найден");
+
     const newId = Date.now();
     const newChat = {
       id: newId,
-      name: `New chat ${newId.toString().slice(-4)}`,
+      name: username,
       avatar: avatar1,
       messages: [
-        { id: 1, sender: "system", text: "Новый чат создан. Напишите сообщение, чтобы начать.", time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) }
+        { id: 1, sender: "system", text: "Новый чат создан. Напишите сообщение.", time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) }
       ]
     };
     setChats((prev) => [newChat, ...prev]);
     setActiveChatId(newId);
-
-    // integration point:
-    // fetch("/api/chats", { method: "POST", body: JSON.stringify({ name: newChat.name })})
   }
+
 
   // Отправка сообщения: обновляет chats в родителе => ChatWindow получает свежие props
   function sendMessage(chatId, text) {
@@ -72,6 +76,7 @@ export default function ChatCenter() {
     // fetch(`/api/chats/${chatId}/messages`, { method: "POST", headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'text', content:text })})
   }
 
+  const navigate = useNavigate();
   const activeChat = chats.find((c) => c.id === activeChatId) || null;
 
   return (
@@ -82,6 +87,14 @@ export default function ChatCenter() {
         onSelectChat={(chatId) => setActiveChatId(chatId)}
         onCreateChat={createNewChat}
       />
+      <button
+        className="btn btn-secondary chat-back-btn"
+        onClick={() => navigate("/dashboard")}
+        style={{position: 'absolute', top: 10, left: 10}}
+      >
+        ← Dashboard
+      </button>
+
 
       <ChatWindow chat={activeChat} onSend={(text) => sendMessage(activeChatId, text)} />
     </div>
