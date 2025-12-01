@@ -4,11 +4,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { FaDoorOpen } from "react-icons/fa";
 import avatarImg from "../assets/avatar.jpeg"; // положи файл сюда
 
-export default function Dashboard({ username = "User" }) {
+export default function Dashboard() {
+    const username = localStorage.getItem("username") || "User";
   const navigate = useNavigate();
 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
+        localStorage.removeItem("username");
       navigate("/login");
     }
   };

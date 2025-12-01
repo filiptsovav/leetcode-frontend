@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
+//const API = "http://100.91.250.56:8080";
 const API = "http://localhost:8080";
 console.log("CONFIG LOADED");
 export default defineConfig({

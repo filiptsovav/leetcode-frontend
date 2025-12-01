@@ -20,6 +20,7 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
+          localStorage.setItem("username", username);
         console.log("Login successful");
         navigate("/dashboard"); // редирект на главную страницу
       } else {

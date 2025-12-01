@@ -1,0 +1,77 @@
+.statistics-page {
+  min-height: 100vh;
+  background-color: #f2f4ff;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statistics-page .page-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0d6efd;
+  margin-bottom: 18px;
+}
+
+.statistics-page .timeframe-selector {
+  margin-bottom: 16px;
+}
+
+.statistics-page .selector-label {
+  font-weight: 600;
+  margin-right: 10px;
+  color: #0d6efd;
+}
+
+.statistics-page .selector {
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #c7c7c7;
+}
+
+.statistics-page .loading-text {
+  margin-top: 30px;
+  font-size: 1.2rem;
+}
+
+.statistics-page .charts-row {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.statistics-page .card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  width: 100%;
+  max-width: 450px;
+  min-height: 350px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statistics-page .wide-card {
+  max-width: 900px;
+}
+
+.statistics-page .return-button {
+  margin-top: 30px;
+  padding: 12px 26px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #0d6efd;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
