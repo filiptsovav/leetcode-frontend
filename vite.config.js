@@ -35,7 +35,20 @@ export default defineConfig({
                                                     secure: false
                                                   },
 
+          // --- НОВОЕ ПРАВИЛО ДЛЯ ПОИСКА ---
+        "/api": {
+            target: API,
+            changeOrigin: true,
+            secure: false
+        },
 
+        // --- НОВОЕ ПРАВИЛО ДЛЯ ЧАТА (WebSocket) ---
+        "/ws": {
+            target: API,
+            ws: true, // Важно для работы сокетов
+            changeOrigin: true,
+            secure: false
+        }
       }
     }
 })

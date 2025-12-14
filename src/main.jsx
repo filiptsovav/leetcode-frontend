@@ -9,6 +9,7 @@ import TaskChosen from "./pages/TaskChosen";
 import TaskSuggestion from "./pages/TaskSuggestion"
 import Statistics from "./pages/Statistics"
 import ChatPage from "./pages/chat/ChatPage";
+import AdvancedSearch from "./pages/AdvancedSearch";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path= "/taskSuggestion" element = {<TaskSuggestion />} />
         <Route path= "/statistics" element = {<Statistics />} />
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/search" element={<AdvancedSearch />} />
         {/* при желании можно добавить /home, /profile и т.п. */}
       </Routes>
     </BrowserRouter>

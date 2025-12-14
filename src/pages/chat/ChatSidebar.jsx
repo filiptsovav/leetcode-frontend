@@ -1,5 +1,5 @@
 import React from "react";
-import "./chat.css"; // CSS создадим ниже
+import "./chat.css";
 
 export default function ChatSidebar({ chats, activeChatId, onSelect, onCreateClick, currentUser }) {
   
@@ -7,8 +7,10 @@ export default function ChatSidebar({ chats, activeChatId, onSelect, onCreateCli
   const getChatName = (chat) => {
     if (chat.isAnnouncement) return "🔥 Advertisements"; 
     if (chat.isPublic) return "📢 General Chat";
-    // Если приватный, ищем имя собеседника (не моё)
-    const otherUser = chat.users.find(u => u !== currentUser);
+    
+    // ДОБАВЛЕНА ЗАЩИТА: (chat.users || [])
+    // Если users undefined, код не упадет
+    const otherUser = (chat.users || []).find(u => u !== currentUser);
     return otherUser || "Unknown User";
   };
 
@@ -32,7 +34,6 @@ export default function ChatSidebar({ chats, activeChatId, onSelect, onCreateCli
             <div className="chat-info">
               <div className="chat-name">{getChatName(chat)}</div>
               <div className="chat-preview">
-                {/* Показываем текст последнего сообщения, если есть */}
                 {chat.messages && chat.messages.length > 0 
                   ? chat.messages[chat.messages.length - 1].text 
                   : "No messages yet"}
