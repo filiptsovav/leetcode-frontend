@@ -20,6 +20,9 @@ export default function RegisterPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token); 
+        localStorage.setItem("username", username);
         console.log("Registration successful");
         navigate("/dashboard"); // сразу на главную страницу после регистрации
       } else {

@@ -11,6 +11,7 @@ export default function Dashboard() {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out?")) {
         localStorage.removeItem("username");
+        localStorage.removeItem("token"); 
       navigate("/login");
     }
   };
