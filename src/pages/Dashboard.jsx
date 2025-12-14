@@ -74,6 +74,7 @@ export default function Dashboard() {
           { text: "Suggest a Task", to: "/taskSuggestion" },
           { text: "Task Selected", to: "/tasks/chosen" },
           {text: "Chat", to: "/chat"},
+          { text: "Advanced Search", to: "/search" },
         ].map((btn) => (
           <button
             key={btn.text}

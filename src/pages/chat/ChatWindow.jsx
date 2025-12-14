@@ -4,9 +4,10 @@ import "./chat.css";
 export default function ChatWindow({ activeChat, currentUser, onSendMessage }) {
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef(null);
+
+  // Права на запись: если это НЕ объявление ИЛИ если я админ
   const canWrite = !activeChat?.isAnnouncement || currentUser === "123123";
 
-  // Автоскролл вниз при новых сообщениях
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeChat?.messages]);
@@ -14,6 +15,9 @@ export default function ChatWindow({ activeChat, currentUser, onSendMessage }) {
   if (!activeChat) {
     return <div className="chat-placeholder">Select a chat to start messaging</div>;
   }
+
+  // Безопасное получение имени собеседника
+  const chatPartner = (activeChat.users || []).find(u => u !== currentUser) || "Chat";
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -27,7 +31,7 @@ export default function ChatWindow({ activeChat, currentUser, onSendMessage }) {
       <div className="chat-header">
          {activeChat.isAnnouncement ? "🔥 Advertisements (Read Only)" : 
           activeChat.isPublic ? "📢 General Chat" : 
-          `👤 ${activeChat.users.find(u => u !== currentUser) || "Chat"}`}
+          `👤 ${chatPartner}`}
       </div>
 
       <div className="messages-area">
