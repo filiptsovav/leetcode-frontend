@@ -20,6 +20,9 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem("token", data.token); 
+          localStorage.setItem("username", username);
         console.log("Login successful");
         navigate("/dashboard"); // редирект на главную страницу
       } else {

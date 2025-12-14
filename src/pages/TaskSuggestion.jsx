@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./tasklist.css"; // убедитесь, что путь совпадает с расположением файла
 
-export default function TaskList() {
+const PRIMARY_BLUE = "#0d6efd";
+
+export default function TaskSuggestion() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // множество с slug'ами перевёрнутых карточек
+  const [flipped, setFlipped] = useState(new Set());
+
   useEffect(() => {
-    fetch("/taskSuggestion", {credentials: "include"})
+    fetch("/taskSuggestion", { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load tasks");
         return res.json();
@@ -24,6 +30,27 @@ export default function TaskList() {
       });
   }, []);
 
+  const handleMouseEnter = (slug) =>
+    setFlipped((prev) => {
+      const s = new Set(prev);
+      s.add(slug);
+      return s;
+    });
+
+  const handleMouseLeave = (slug) =>
+    setFlipped((prev) => {
+      const s = new Set(prev);
+      s.delete(slug);
+      return s;
+    });
+
+  const handleKeyDown = (e, slug) => {
+    if (e.key === "Enter" || e.key === " ") {
+      // открываем задачу в новой вкладке
+      window.open(`https://leetcode.com/problems/${slug}`, "_blank", "noopener,noreferrer");
+    }
+  };
+
   if (loading) {
     return <div className="text-center mt-5">Loading...</div>;
   }
@@ -33,76 +60,72 @@ export default function TaskList() {
   }
 
   return (
-    <div
-      className="container"
-      style={{ padding: "20px", minHeight: "100vh", backgroundColor: "#f8f9fa" }}
-    >
-      <h1 className="text-center mb-4">Task List</h1>
+    <div className="tasks-page">
+      <h1 className="tasks-title">Task List</h1>
 
-      <div
-        className="task-container d-grid gap-3"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}
-      >
-        {tasks.map((task) => (
-          <a
-            key={task.titleSlug}
-            href={`https://leetcode.com/problems/${task.titleSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card p-3 text-decoration-none text-dark"
-            style={{
-              position: "relative",
-              overflow: "hidden",
-              cursor: "pointer",
-              transition: "transform 0.15s, box-shadow 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-3px)";
-              e.currentTarget.style.boxShadow = "0 6px 15px rgba(0,0,0,0.15)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
-            }}
-          >
-            <div className="task-info text-center mb-2">
-              <strong>{task.title}</strong>
-              <br />
-              Difficulty: {task.difficulty}
-              <br />
-              Tags:{" "}
-              {task.topicTags && task.topicTags.length > 0
-                ? task.topicTags.map((tag) => tag.name).join(", ")
-                : "None"}
-            </div>
+      <div className="tasks-grid">
+        {tasks.map((task) => {
+          const slug = task.titleSlug;
+          const isFlipped = flipped.has(slug);
 
+          return (
             <div
-              className="task-description"
-              style={{
-                display: "none",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0,123,255,0.1)",
-                color: "black",
-                padding: "15px",
-                borderRadius: "5px",
-                textAlign: "center",
-                overflow: "hidden",
-              }}
+              key={slug}
+              className="tasks-card"
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                window.open(`https://leetcode.com/problems/${slug}`, "_blank", "noopener,noreferrer")
+              }
+              onMouseEnter={() => handleMouseEnter(slug)}
+              onMouseLeave={() => handleMouseLeave(slug)}
+              onFocus={() => handleMouseEnter(slug)}
+              onBlur={() => handleMouseLeave(slug)}
+              onKeyDown={(e) => handleKeyDown(e, slug)}
+              aria-label={`Open LeetCode problem ${task.title}`}
             >
-              <p>{task.content ? task.content.split("\n")[0] : "No content available"}</p>
+              <div className={`card-inner ${isFlipped ? "flipped" : ""}`}>
+                <div className="card-front">
+                  <div className="task-info">
+                    <div className="task-title">{task.title}</div>
+                    <div
+                      className={
+                        task.difficulty === "Easy"
+                          ? "task-diff task-diff-easy"
+                          : task.difficulty === "Medium"
+                          ? "task-diff task-diff-medium"
+                          : "task-diff task-diff-hard"
+                      }
+                    >
+                      {task.difficulty}
+                    </div>
+                    <small className="text-muted">
+                      Tags:{" "}
+                      {task.topicTags && task.topicTags.length > 0
+                        ? task.topicTags.map((t) => t.name).join(", ")
+                        : "None"}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="card-back">
+                  <p className="task-back-text">
+                    {task.content
+                      ? task.content.replace(/<[^>]*>/g, "").split("\n")[0].substring(0, 150) + "..."
+                      : "No content available"}
+                  </p>
+                </div>
+              </div>
             </div>
-          </a>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="text-center mt-4">
+      <div className="text-center">
         <button
-          className="btn btn-primary"
+          className="tasks-button"
           onClick={() => navigate("/dashboard")}
+          aria-label="Return to Home Page"
         >
           Return to Home Page
         </button>
