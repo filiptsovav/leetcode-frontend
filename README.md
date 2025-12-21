@@ -1,16 +1,55 @@
-# React + Vite
+# Frontend часть проекта leetcode-project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Описание проекта
 
-Currently, two official plugins are available:
+**leetcode-project** — это веб-приложение, предназначенное для помощи в подготовке к алгоритмическим собеседованиям и работе с задачами формата LeetCode. Проект объединяет несколько функциональных модулей, включая работу с задачами, аналитику, персональные рекомендации и чат как один из вспомогательных инструментов.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Фронтенд реализует пользовательский интерфейс приложения, обеспечивает навигацию между страницами, взаимодействие с серверной частью и отображение данных в удобной и структурированной форме. Архитектура ориентирована на расширяемость и поддержку новых возможностей в будущем.
 
-## React Compiler
+## Основные возможности
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* внесение решенных задач с расширенной информацией: время решения, номер попытки;
+* получение индивидуальных рекомендаций по выбору заданий;
+* просмотр статистики по темам, времени решения и др.;
+* чаты с администратором и другими пользователями;
+* поиск задачи по ключевым словам;
+* аутентификация и регистрация пользователей.
 
-## Expanding the ESLint configuration
+## Используемый стек
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **React** — построение интерфейса и управление состоянием;
+* **CSS3** — стилизация и адаптивная верстка;
+* **React Router** — навигация между страницами;
+* **Fetch API** — взаимодействие с бэкендом по HTTP;
+* **Vite** — сборка проекта и dev-сервер.
+
+## Запуск проекта локально
+
+> Предполагается, что бэкенд уже запущен и доступен по настроенному адресу.
+
+1. Клонировать репозиторий:
+
+   ```bash
+   git clone https://github.com/filiptsovav/leetcode-frontend
+   cd leetcode-frontend
+   ```
+
+2. Установить зависимости:
+
+   ```bash
+   npm install
+   ```
+
+3. При необходимости проверить адрес бэкенда в конфигурации.
+
+4. Запустить проект в режиме разработки:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Открыть приложение в браузере по адресу, указанному в консоли Vite.
+
+## Перспективы развития
+
+Фронтенд реализован как независимый и масштабируемый слой, готовый к развитию вместе с серверной частью проекта.
