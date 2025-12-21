@@ -1,76 +1,72 @@
 import React, { useState, useEffect, useRef } from "react";
-import MessageBubble from "./MessageBubble";
+import "./chat.css";
 
-export default function ChatWindow({ chat, onSend }) {
-  const [input, setInput] = useState("");
-  const [localMessages, setLocalMessages] = useState([]);
-  const messagesRef = useRef(null);
+export default function ChatWindow({ activeChat, currentUser, onSendMessage }) {
+  const [inputText, setInputText] = useState("");
+  const messagesEndRef = useRef(null);
 
-  // sync localMessages each time меняется prop `chat`
+  // Права на запись: если это НЕ объявление ИЛИ если я админ
+  const canWrite = !activeChat?.isAnnouncement || currentUser === "123123";
+
   useEffect(() => {
-    if (chat && chat.messages) {
-      setLocalMessages(chat.messages);
-      // прокрутка вниз при выборе чата
-      setTimeout(() => {
-        if (messagesRef.current) messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-      }, 50);
-    } else {
-      setLocalMessages([]);
-    }
-  }, [chat]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeChat?.messages]);
 
-  if (!chat) {
-    return (
-      <main className="chat-window" aria-live="polite">
-        <div className="chat-placeholder">Select a chat to start</div>
-      </main>
-    );
+  if (!activeChat) {
+    return <div className="chat-placeholder">Select a chat to start messaging</div>;
   }
 
-  function handleSend() {
-    if (!input.trim()) return;
-    // вызов родительского onSend — обновит chats в ChatCenter (источник правды)
-    if (onSend) onSend(input.trim());
-    // обновляем локально для мгновенного UX — родитель при обновлении props перезапишет
-    const ts = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const newMsg = { id: Date.now(), sender: "me", text: input.trim(), time: ts };
-    setLocalMessages((m) => [...m, newMsg]);
-    setInput("");
-    // скролим вниз
-    setTimeout(() => {
-      if (messagesRef.current) messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }, 50);
-  }
+  // Безопасное получение имени собеседника
+  const chatPartner = (activeChat.users || []).find(u => u !== currentUser) || "Chat";
 
-  function handleKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  }
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    onSendMessage(activeChat.id, inputText);
+    setInputText("");
+  };
 
   return (
-    <main className="chat-window" aria-label={`Chat with ${chat.name}`}>
-      <div className="chat-header">{chat.name}</div>
-
-      <div className="messages-container" ref={messagesRef}>
-        {localMessages.map((m) => (
-          <MessageBubble key={m.id} msg={m} />
-        ))}
+    <div className="chat-window">
+      <div className="chat-header">
+         {activeChat.isAnnouncement ? "🔥 Advertisements (Read Only)" : 
+          activeChat.isPublic ? "📢 General Chat" : 
+          `👤 ${chatPartner}`}
       </div>
 
-      <div className="user-panel">
-        <textarea
-          className="message-input"
-          placeholder="Введите сообщение..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <button className="send-btn" onClick={handleSend} aria-label="Send message">
-          ➤
-        </button>
+      <div className="messages-area">
+        {activeChat.messages?.map((msg) => {
+          const isMe = msg.senderUsername === currentUser;
+          return (
+            <div key={msg.id || Math.random()} className={`message-row ${isMe ? "my-message" : "other-message"}`}>
+              {!isMe && <div className="message-sender">{msg.senderUsername}</div>}
+              <div className="message-bubble">
+                {msg.text}
+                <span className="message-time">
+                  {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef} />
       </div>
-    </main>
+
+      {canWrite ? (
+        <form className="input-area" onSubmit={handleSend}>
+          <input 
+            type="text" 
+            placeholder={activeChat.isAnnouncement ? "Post an ad..." : "Type a message..."}
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+          />
+          <button type="submit">Send</button>
+        </form>
+      ) : (
+        <div style={{ padding: 20, textAlign: "center", color: "#888", background: "#f9f9f9", borderTop: "1px solid #ddd" }}>
+          Only admin can post here.
+        </div>
+      )}
+    </div>
   );
 }

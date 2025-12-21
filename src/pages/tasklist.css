@@ -1,0 +1,158 @@
+/* --- container / page --- */
+.tasks-page {
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f2f4ff; /* согласовано со статистикой */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Заголовок — тот же стиль, что и на Statistics */
+.tasks-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0d6efd; /* PRIMARY_BLUE */
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* --- адаптивная сетка: 1 / 2 / 3 колонки --- */
+.tasks-grid {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 18px;
+  justify-items: center;
+}
+
+/* планшет */
+@media (max-width: 992px) {
+  .tasks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* мобильные */
+@media (max-width: 576px) {
+  .tasks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- карточка --- */
+/* уменьшены размеры карточки, чтобы кнопка была видна без прокрутки */
+.tasks-card {
+  width: 100%;
+  max-width: 350px;   /* уменьшено */
+  aspect-ratio: 1/1;  /* квадрат */
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* внутренний контейнер для flip */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+/* состояние перевёрнутости через класс */
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+/* стороны карточки */
+.card-front,
+.card-back {
+  position: absolute;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  backface-visibility: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* фронт */
+.card-front {
+  background: #ffffff;
+}
+
+/* тыльная сторона */
+.card-back {
+  background: #ffd9ec;
+  transform: rotateY(180deg);
+}
+
+/* текст внутри карточки */
+.task-info {
+  text-align: center;
+  line-height: 1.3;
+}
+
+.task-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+/* цвет для сложности */
+.task-diff {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.task-diff-easy { color: #28a745; }
+.task-diff-medium { color: #ffc107; }
+.task-diff-hard { color: #dc3545; }
+
+/* описание на обратной стороне */
+.task-back-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #111;
+  text-align: center;
+}
+
+/* --- кнопка возврата (тот же стиль, что на Statistics) --- */
+.tasks-button {
+  margin-top: 6px;
+  padding: 10px 22px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #0d6efd;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.tasks-button:hover,
+.tasks-button:focus {
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* мелкая визуальная оптимизация для доступности */
+.tasks-card:focus {
+  box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+  border-radius: 12px;
+}
+
+/* предотвращаем конфликт с bootstrap */
+.tasks-page .btn {
+  border-radius: 10px;
+}
